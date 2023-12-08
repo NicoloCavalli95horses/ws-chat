@@ -9,8 +9,8 @@
 
 <script setup>
   // WebSocket connection
-  // const url = 'wss://test-ws-t98j.onrender.com';
-  const url = 'ws://localhost:3000';
+  const url = 'wss://ws-chat-ntws.onrender.com';
+  // const url = 'ws://localhost:3000';
   const socket = new WebSocket(url);
 
   // Event listener for connection open
