@@ -15,11 +15,11 @@ const port = process.env.PORT || 3000;
 // app
 //=====================
 const app = express();
-app.use( express.static(path.join(__dirname, "frontend/dist")) );
+app.use( express.static(path.join(__dirname, "public")) );
 
 // serve the index.html file
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "frontend/dist", "index.html"));
+  res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
 //=====================
