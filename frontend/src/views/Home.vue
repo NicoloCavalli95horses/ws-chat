@@ -1,15 +1,16 @@
 <template>
   <div class="main">
     <div class="chat">
-      <div v-for="(msg, i) in messages" :key="i" class="cloud-text">
-        <p> {{ msg }} </p>
+      <div v-for="(msg, i) in messages" :key="i" class="cloud-text" :class="{ 'sent' : msg.is_sent }">
+        <p> {{ msg.value }} </p>
+        <label>{{ msg.hhmm }}</label>
       </div>
     </div>
 
 
     <div class="input-wrapper">
-      <InputText class="input" placeholder="your message..." v-model:text="text" />
-      <Btn class="l-12" @click="onClick">Send</Btn>
+      <InputText class="input" placeholder="Message" v-model:text="text" @keydown.enter="onSendMsg" />
+      <Btn class="l-12" @click="onSendMsg">Send</Btn>
     </div>
   </div>
 </template>
@@ -44,10 +45,19 @@ let socket;
 //=============================
 // functions
 //=============================
-function onClick() {
-  messages.value.push( text.value );
+function onSendMsg() {
+  messages.value.push({
+    value: text.value,
+    is_sent: true,
+    hhmm: getHour(),
+  });
   socket.send( text.value );
   text.value = '';
+}
+
+function getHour() {
+  const date = new Date();
+  return date.getHours() + ':' + date.getMinutes()
 }
 
 function initWebSocket() {
@@ -61,7 +71,10 @@ function initWebSocket() {
   // incoming messages
   socket.addEventListener('message', async (event) => {
     const textMsg = await blobToText(event.data);
-    messages.value.push( textMsg );
+    messages.value.push({
+      value: textMsg,
+      hhmm: getHour()
+    });
   });
 }
 
@@ -90,10 +103,21 @@ onMounted(() => {
     border-radius: 12px;
     margin: 12px;
     background-color: #fff;
-    border: 1px solid #999;
+    border: 1px solid #ddd;
+    position: relative;
+    &.sent {
+      background-color: rgb(235, 255, 255);
+    }
     p {
       color: var(--dark-text);
       padding: 12px;
+    }
+    label {
+      position: absolute;
+      bottom: 8px;
+      right: 12px;
+      font-size: 10px;
+      color: var(--dark-text);
     }
   }
   .input-wrapper {
